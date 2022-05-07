@@ -19,7 +19,7 @@ namespace PiggyBank.Models
         public string TransactionSourceAccount { get; set; }
         public string TransactionDestinationAccount { get; set; }
         public string TransactionParticulars { get; set; }
-        public TranType TrasactionType { get; set; }
+        public TranType TransactionType { get; set; }
         public DateTime TransactionDate { get; set; }
 
         public Transaction()

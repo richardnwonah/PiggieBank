@@ -13,7 +13,7 @@ namespace PiggyBank.Models
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         [Required]
-        [RegularExpression(@"^[0-9]/d(4)$", ErrorMessage = "Pin must not be more than 4 digits")] //it should be a 4-digit string
+        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "Pin must not be more than 4 digits")] //it should be a 4-digit string
         public string Pin { get; set; }
         [Required]
         [Compare("Pin", ErrorMessage = "Pins do not match")]

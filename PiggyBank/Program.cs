@@ -2,14 +2,17 @@ using PiggyBank.DAL;
 using PiggyBank.Services.Interfaces;
 using PiggyBank.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<PiggyBankDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PiggyBankDbContext")));
+    options.UseSqlite(connectionString));
+
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<AccountService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

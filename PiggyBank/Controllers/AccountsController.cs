@@ -62,7 +62,7 @@ public class AccountsController : ControllerBase
     [Route("get_by_account_number")]
     public IActionResult GetByAccountNumber(string AccountNumber)
     {
-        if(!Regex.IsMatch(AccountNumber, @"^[0][1-9]\d{9}$|^[1-9]\d(9)$")) return BadRequest("Account number must be 10-digits");
+        if(!Regex.IsMatch(AccountNumber, @"^[0][1-9]\d{9}$|^[1-9]\d{9}$")) return BadRequest("Account number must be 10-digits");
 
         var account = _accountService.GetByAccountNumber(AccountNumber);
         var cleanedAccount = _mapper.Map<GetAccountModel>(account);
@@ -79,9 +79,9 @@ public class AccountsController : ControllerBase
         return Ok(cleanedAccount);
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("update_account")]
-    public IActionResult UpdateAccount([FromBody] UpdateAccountModel model, string Pin)
+    public IActionResult UpdateAccount([FromBody] UpdateAccountModel model)
     {
         if (!ModelState.IsValid) return BadRequest(model);
 

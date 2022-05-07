@@ -105,7 +105,7 @@ namespace PiggyBank.Services.Implementations
 
        return account;
       }
-      public void Update(Account account, string Pin = null)
+      public void Update(Account account, string Pin = null)  //use Id to fix this
       {
         var accountToBeUpdated = _dbContext.Accounts.Where(x => x.Email == account.Email).SingleOrDefault();
         if(accountToBeUpdated == null) throw new ApplicationException("Account does not exist");

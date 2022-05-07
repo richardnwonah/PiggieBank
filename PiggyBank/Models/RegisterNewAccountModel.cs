@@ -21,7 +21,7 @@ namespace PiggyBank.Models
         public DateTime DateCreated { get; set; }
         public DateTime DateLastUpdated { get; set; }
         [Required]
-        [RegularExpression(@"^[0-9]\d(4)$", ErrorMessage = "Pin must not be more than 4 digits")] //it should be a 4-digit string
+        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "Pin must not be more than 4 digits")] //it should be a 4-digit string
         public string Pin { get; set; }
         [Required]
 
