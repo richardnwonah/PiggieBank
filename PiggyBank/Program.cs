@@ -1,8 +1,10 @@
 using PiggyBank.DAL;
+using Microsoft.OpenApi.Models;
 using PiggyBank.Services.Interfaces;
 using PiggyBank.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
+using PiggyBank.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,28 +14,29 @@ builder.Services.AddDbContext<PiggyBankDbContext>(options =>
     options.UseSqlite(connectionString));
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
+builder.Services.Configure<AppSettings>(System.Configuration.Configuration.GetSection("AppSettings"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(
-    //x =>
-    //{
-      //  x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-        //{
-          //  Title = "PiggyBank banking api",
-            //Version = "v1",
-            //Description = "Banking api with basic functionalities",
-            //Contact = new Microsoft.OpenApi.Models.OpenAPIContact
-            //{
-              //  Name = "Richard Nwonah",
-               // Email = "richardnwonah@outlook.com"
+builder.Services.AddSwaggerGen(x =>
+    {
+       x.SwaggerDoc("v1", new OpenApiInfo
+      {
+        Title = "PiggyBank banking api",
+          Version = "v1",
+          Description = "Banking api with basic functionalities",
+          Contact = new OpenApiContact
+          {
+               Name = "Richard Nwonah",
+               Email = "richardnwonah@outlook.com",
+               Url = new Uri("https://github.com/richardnwonah/PiggieBank")
     
-            //}
-    //});
-//}
-);
+            }
+    });
+});
 
 var app = builder.Build();
 

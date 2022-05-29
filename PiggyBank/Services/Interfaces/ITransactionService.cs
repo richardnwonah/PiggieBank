@@ -12,7 +12,7 @@ namespace PiggyBank.Services.Interfaces
   {
     Response CreateNewTransaction(Transaction transaction); //using our custom created response
     Response FindTransactionByDate(DateTime date);
-    Response MakeDeposite(string AccountNumber, decimal Amount, string TransactionPin);
+    Response MakeDeposit(string AccountNumber, decimal Amount, string TransactionPin);
     Response MakeWithdrawal(string AccountNumber, decimal Amount, string TransactionPin);
     Response MakeFundsTransfer(string FromAccount, string ToAccount, decimal Amount, string TransactionPin);
     

@@ -18,6 +18,7 @@ namespace PiggyBank.Profiles
 
       CreateMap<UpdateAccountModel, Account>();
       CreateMap<Account, GetAccountModel>();
+      CreateMap<TransactionRequestDto, Transaction>();
       //mapping to dto classes
     }
   }

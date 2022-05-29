@@ -54,7 +54,7 @@ namespace PiggyBank.Services.Implementations;
        return response;
 
     }
-    public Response MakeDeposite(string AccountNumber, decimal Amount, string TransactionPin)
+    public Response MakeDeposit(string AccountNumber, decimal Amount, string TransactionPin)
     {
         //make deposite
         Response response = new Response();
@@ -117,10 +117,124 @@ namespace PiggyBank.Services.Implementations;
     }
     public Response MakeWithdrawal(string AccountNumber, decimal Amount, string TransactionPin)
     {
-      throw new NotImplementedException();
+         //make withdrawal
+
+        Response response = new Response();
+        Account sourceAccount;
+        Account destinationAccount;
+        Transaction transaction = new Transaction();
+
+        var authUser = _accountService.Authenticate(AccountNumber, TransactionPin);
+        if(authUser == null) throw new ApplicationException("Invalid credentials");
+
+        //if validation passes
+        try
+        {
+          //for withdrawals, our bankSettlementAccount is the destination giving money from the user's account
+          sourceAccount = _accountService.GetByAccountNumber(AccountNumber);
+          destinationAccount = _accountService.GetByAccountNumber(_ourBankSettlementAccount);
+
+          //TO update their account balances
+          sourceAccount.CurrentAccountBalance -= Amount;
+          destinationAccount.CurrentAccountBalance += Amount;
+
+          //chec if there's an update
+          if((_dbContext.Entry(sourceAccount).State == Microsoft.EntityFrameworkCore.EntityState.Modified) &&
+            (_dbContext.Entry(destinationAccount).State == Microsoft.EntityFrameworkCore.EntityState.Modified))
+          {
+            //if transaction is successful
+            transaction.TransactionStatus = TranStatus.Success;
+            response.ResponseCode = "00";
+            response.ResponseMessage = "Transaction successful!";
+            response.Data = null;
+          }
+          else
+          {
+            //if transaction is unsuccessful
+            transaction.TransactionStatus = TranStatus.Failed;
+            response.ResponseCode = "02";
+            response.ResponseMessage = "Transaction failed!";
+            response.Data = null;
+          
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+        }
+        //Other props of transaction
+        transaction.TransactionType = TranType.Withdrawal;
+        transaction.TransactionSourceAccount = _ourBankSettlementAccount;
+        transaction.TransactionDestinationAccount = AccountNumber;
+        transaction.TransactionAmount = Amount;
+        transaction.TransactionDate = DateTime.Now;
+        transaction.TransactionParticulars = $"NEW TRANSACTION FROM SOURCE {JsonConvert.SerializeObject(transaction.TransactionSourceAccount)} TO DESTINATION ACCOUNT => {JsonConvert.SerializeObject(transaction.TransactionDestinationAccount)} ON DATE => {transaction.TransactionDate} FOR AMOUNT => {JsonConvert.SerializeObject(transaction.TransactionAmount)} TRANSACTION TYPE => {JsonConvert.SerializeObject(transaction.TransactionType)} TRANSACTION STATUS => {JsonConvert.SerializeObject(transaction.TransactionStatus)}";
+
+        //commit to db
+        _dbContext.Transactions.Add(transaction);
+        _dbContext.SaveChanges();
+
+        return response;
     }
     public Response MakeFundsTransfer(string FromAccount, string ToAccount, decimal Amount, string TransactionPin)
     {
-      throw new NotImplementedException();
+               //make withdrawal
+
+        Response response = new Response();
+        Account sourceAccount;
+        Account destinationAccount;
+        Transaction transaction = new Transaction();
+
+        var authUser = _accountService.Authenticate(FromAccount, TransactionPin);
+        if(authUser == null) throw new ApplicationException("Invalid credentials");
+
+        //if validation passes
+        try
+        {
+          //for withdrawals, our bankSettlementAccount is the destination giving money from the user's account
+          sourceAccount = _accountService.GetByAccountNumber(FromAccount);
+          destinationAccount = _accountService.GetByAccountNumber(ToAccount);
+
+          //TO update their account balances
+          sourceAccount.CurrentAccountBalance -= Amount;
+          destinationAccount.CurrentAccountBalance += Amount;
+
+          //chec if there's an update
+          if((_dbContext.Entry(sourceAccount).State == Microsoft.EntityFrameworkCore.EntityState.Modified) &&
+            (_dbContext.Entry(destinationAccount).State == Microsoft.EntityFrameworkCore.EntityState.Modified))
+          {
+            //if transaction is successful
+            transaction.TransactionStatus = TranStatus.Success;
+            response.ResponseCode = "00";
+            response.ResponseMessage = "Transaction successful!";
+            response.Data = null;
+          }
+          else
+          {
+            //if transaction is unsuccessful
+            transaction.TransactionStatus = TranStatus.Failed;
+            response.ResponseCode = "02";
+            response.ResponseMessage = "Transaction failed!";
+            response.Data = null;
+          
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+        }
+        //Other props of transaction
+        transaction.TransactionType = TranType.Transfer;
+        transaction.TransactionSourceAccount = FromAccount;
+        transaction.TransactionDestinationAccount = ToAccount;
+        transaction.TransactionAmount = Amount;
+        transaction.TransactionDate = DateTime.Now;
+        transaction.TransactionParticulars = $"NEW TRANSACTION FROM SOURCE {JsonConvert.SerializeObject(transaction.TransactionSourceAccount)} TO DESTINATION ACCOUNT => {JsonConvert.SerializeObject(transaction.TransactionDestinationAccount)} ON DATE => {transaction.TransactionDate} FOR AMOUNT => {JsonConvert.SerializeObject(transaction.TransactionAmount)} TRANSACTION TYPE => {JsonConvert.SerializeObject(transaction.TransactionType)} TRANSACTION STATUS => {JsonConvert.SerializeObject(transaction.TransactionStatus)}";
+
+        //commit to db
+        _dbContext.Transactions.Add(transaction);
+        _dbContext.SaveChanges();
+
+        return response;
     }
   }
